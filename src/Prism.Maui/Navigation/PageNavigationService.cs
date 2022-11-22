@@ -331,9 +331,9 @@ public class PageNavigationService : INavigationService, IRegistryAware
         var nextSegment = segments.Dequeue();
 
         var pageParameters = UriParsingHelper.GetSegmentParameters(nextSegment);
-        //var useModalNavigation = pageParameters.ContainsKey(KnownNavigationParameters.UseModalNavigation) ? pageParameters.GetValue<bool>(KnownNavigationParameters.UseModalNavigation) : false;
+        useModalNavigation = useModalNavigation == true || pageParameters.ContainsKey(KnownNavigationParameters.UseModalNavigation) ? pageParameters.GetValue<bool>(KnownNavigationParameters.UseModalNavigation) : false;
 
-        //var animated = pageParameters.ContainsKey(KnownNavigationParameters.Animated) ? pageParameters.GetValue<bool>(KnownNavigationParameters.Animated) : true;
+        animated = animated || pageParameters.ContainsKey(KnownNavigationParameters.Animated) ? pageParameters.GetValue<bool>(KnownNavigationParameters.Animated) : true;
 
         if (nextSegment == RemovePageSegment)
         {
@@ -1130,7 +1130,7 @@ public class PageNavigationService : INavigationService, IRegistryAware
         var rootPage = GetPageFromWindow();
         if (navPage.CurrentPage != navPage.RootPage)
             return false;
-        else if (navPage.CurrentPage == navPage.RootPage && navPage.Parent is Application && rootPage != navPage)
+        else if (navPage.CurrentPage == navPage.RootPage && navPage.Parent is PrismWindow && rootPage != navPage)
             return true;
         else if (navPage.Parent is TabbedPage tabbed && tabbed != rootPage)
             return true;
