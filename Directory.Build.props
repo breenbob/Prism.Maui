@@ -9,8 +9,8 @@
     <PackageIcon>prism-logo.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageOutputPath>$(MSBuildThisFileDirectory)Artifacts</PackageOutputPath>
-    <IncludeSymbols>True</IncludeSymbols>
-    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>False</IncludeSymbols>
+    <IncludeSource>False</IncludeSource>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/dansiegel/Prism.Maui</RepositoryUrl>
     <PrismPackageIcon>$(MSBuildThisFileDirectory)prism-logo.png</PrismPackageIcon>
