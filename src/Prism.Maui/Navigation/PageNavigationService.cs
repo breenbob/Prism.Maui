@@ -238,15 +238,39 @@ public class PageNavigationService : INavigationService, IRegistryAware
                 throw new NavigationException(NavigationException.IConfirmNavigationReturnedFalse, page);
             }
 
-            var pagesToDestroy = page.Navigation.NavigationStack.ToList(); // get all pages to destroy
-            pagesToDestroy.Reverse(); // destroy them in reverse order
-            var root = pagesToDestroy.Last();
-            pagesToDestroy.Remove(root); //don't destroy the root page
+            bool useModalForDoPop = UseModalGoBack(page, parameters);
 
+            var pagesToDestroy = useModalForDoPop
+                ? page.Navigation.ModalStack.ToList()
+                : page.Navigation.NavigationStack.ToList(); // get all pages to destroy
+
+            pagesToDestroy.Reverse(); // destroy them in reverse order
+            Page root = page; // in modal scenario root will be our current page
             bool animated = parameters.ContainsKey(KnownNavigationParameters.Animated) ? parameters.GetValue<bool>(KnownNavigationParameters.Animated) : true;
-            NavigationSource = PageNavigationSource.NavigationService;
-            await page.Navigation.PopToRootAsync(animated);
-            NavigationSource = PageNavigationSource.Device;
+
+            if (!useModalForDoPop)
+            {
+                root = pagesToDestroy.Last();
+                pagesToDestroy.Remove(root); //don't destroy the root page
+
+                NavigationSource = PageNavigationSource.NavigationService;
+                await page.Navigation.PopToRootAsync(animated);
+                NavigationSource = PageNavigationSource.Device;
+            }
+            else
+            {
+                // In modal scenario root will be last page in normal navigation stack
+                root = page.Navigation.NavigationStack.LastOrDefault();
+                var modalPage = page.Navigation.ModalStack.FirstOrDefault();
+                var count = modalPage.Navigation.ModalStack.Count;
+
+                NavigationSource = PageNavigationSource.NavigationService;
+                for (int i = 0; i < count; i++)
+                {
+                    await modalPage.Navigation.PopModalAsync(animated);
+                }
+                NavigationSource = PageNavigationSource.Device;
+            }
 
             foreach (var destroyPage in pagesToDestroy)
             {
