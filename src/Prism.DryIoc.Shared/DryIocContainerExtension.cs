@@ -22,6 +22,7 @@ namespace Prism.DryIoc
         /// </summary>
         public static Rules DefaultRules => Rules.Default.WithConcreteTypeDynamicRegistrations(reuse: Reuse.Transient)
                                                          .With(Made.Of(FactoryMethod.ConstructorWithResolvableArguments))
+                                                         .WithUseInterpretation()
                                                          .WithFuncAndLazyWithoutRegistration()
                                                          .WithTrackingDisposableTransients()
                                                          .WithoutFastExpressionCompiler()
